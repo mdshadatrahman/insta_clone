@@ -39,6 +39,17 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
+  void signUpUser() async {
+    String res = await AuthMethods().signupUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _passwordController.text,
+      bio: _bioController.text,
+      file: _image!,
+    );
+    //print(res);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,19 +129,11 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(
                 height: 24,
               ),
-              //button login
+              //button signup
               InkWell(
-                onTap: () async {
-                  String res = await AuthMethods().signupUser(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                    username: _passwordController.text,
-                    bio: _bioController.text,
-                    //file: _image!,
-                  );
-                },
+                onTap: signUpUser,
                 child: Container(
-                  child: const Text('Log in'),
+                  child: const Text('Sign up'),
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),
