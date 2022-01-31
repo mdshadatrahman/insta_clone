@@ -22,6 +22,7 @@ class AuthMethods {
           password.isNotEmpty ||
           username.isNotEmpty ||
           bio.isNotEmpty ||
+          // ignore: unnecessary_null_comparison
           file != null) {
         //register user
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
@@ -39,11 +40,32 @@ class AuthMethods {
           'following': [],
           'photoUrl': photoUrl,
         });
-        res = 'Success';
+        res = 'success';
       }
     } catch (e) {
       res = e.toString();
     }
+    return res;
+  }
+
+  Future<String> loginUser(
+      {required String email, required String password}) async {
+    String res = 'Something went wrong';
+
+    try {
+      if (email.isNotEmpty || password.isNotEmpty) {
+        //Login user
+        // ignore: unused_local_variable
+        UserCredential cred = await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        res = 'success';
+      } else {
+        res = 'Please enter all the fields';
+      }
+    } catch (e) {
+      res = e.toString();
+    }
+
     return res;
   }
 }
