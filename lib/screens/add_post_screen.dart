@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram/models/user.dart';
 import 'package:instagram/provider/user_provider.dart';
+import 'package:instagram/resources/firestore_%20methods.dart';
+import 'package:instagram/resources/storage_methods.dart';
 import 'package:instagram/utils/colors.dart';
 import 'package:instagram/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +18,59 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
+  final _storageMethod = StorageMethods();
   Uint8List? _file;
   final TextEditingController _descriptionController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _descriptionController.dispose();
+  }
+
+  void clearImage() {
+    setState(() {
+      _file = null;
+    });
+  }
+
+  void postImage(
+    String uid,
+    String username,
+    String profImage,
+  ) async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      String res = await FirestoreMethods().uploadPost(
+        _descriptionController.text,
+        uid,
+        _file!,
+        username,
+        profImage,
+      );
+      if (res == 'success') {
+        setState(() {
+          _isLoading = false;
+        });
+
+        showSnackBar('Posted', context);
+        clearImage();
+      } else {
+        setState(() {
+          setState(() {
+            _isLoading = false;
+          });
+        });
+        showSnackBar(res, context);
+      }
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+  }
+
   _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
@@ -84,7 +137,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    
+                    postImage(user.uid, user.username, user.photoUrl);
+                    _descriptionController.clear();
                   },
                   child: const Text(
                     'Post',
@@ -99,6 +153,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
             body: Column(
               children: [
+                _isLoading
+                    ? const LinearProgressIndicator()
+                    : const Padding(
+                        padding: EdgeInsets.only(top: 0),
+                      ),
+                const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
