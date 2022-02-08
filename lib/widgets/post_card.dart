@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instagram/models/user.dart';
+import 'package:instagram/resources/firestore_%20methods.dart';
+import 'package:instagram/screens/comment_screen.dart';
 import 'package:instagram/utils/colors.dart';
 import 'package:instagram/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -89,7 +91,12 @@ class _PostCardState extends State<PostCard> {
           //Image section
 
           GestureDetector(
-            onDoubleTap: () {
+            onDoubleTap: () async {
+              await FirestoreMethods().likePost(
+                widget.snap['postId'],
+                user.uid,
+                widget.snap['like'],
+              );
               setState(() {
                 isLikeAnimating = true;
               });
@@ -133,15 +140,31 @@ class _PostCardState extends State<PostCard> {
                 isAnimating: widget.snap['like'].contains(user.uid),
                 smallLike: true,
                 child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  ),
+                  onPressed: () async {
+                    await FirestoreMethods().likePost(
+                      widget.snap['postId'],
+                      user.uid,
+                      widget.snap['like'],
+                    );
+                  },
+                  icon: widget.snap['like'].contains(user.uid)
+                      ? const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        )
+                      : const Icon(
+                          Icons.favorite_border,
+                        ),
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CommentScreen(),
+                    ),
+                  );
+                },
                 icon: const Icon(
                   Icons.comment_outlined,
                 ),
@@ -180,7 +203,7 @@ class _PostCardState extends State<PostCard> {
                         fontWeight: FontWeight.w800,
                       ),
                   child: Text(
-                    '${widget.snap['like'].length} likes',
+                    '${widget.snap['like'].length} like',
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
