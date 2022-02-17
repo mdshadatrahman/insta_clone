@@ -184,19 +184,20 @@ class _SignupScreenState extends State<SignupScreen> {
                 height: 12,
               ),
               Flexible(child: Container(), flex: 2),
+
               //Trasitioning to signing up
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    child: const Text("Don't have an account? "),
+                    child: const Text("Already have an account? "),
                     padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
                   GestureDetector(
                     onTap: navigateToLogin,
                     child: Container(
                       child: const Text(
-                        "Sign up.",
+                        "Log in.",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
