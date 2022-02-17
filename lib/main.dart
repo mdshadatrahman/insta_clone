@@ -47,6 +47,13 @@ class MyApp extends StatelessWidget {
         home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: primaryColor,
+                ),
+              );
+            }
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
                 return const ResponsiveLayout(
@@ -59,13 +66,7 @@ class MyApp extends StatelessWidget {
                 );
               }
             }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: primaryColor,
-                ),
-              );
-            }
+
             return const LoginScreen();
           },
         ),
@@ -73,15 +74,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-//1:47:00
-//2:19:34
-//2:47:41
-//3:06:19
-//3:43:29
-//4:10:00
-//4:36:15
-//4:45:21
-//4:53:00
-//5:00:00
-//5:44:00
-//6:05:00

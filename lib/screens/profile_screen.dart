@@ -194,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .get(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      const Center(
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     }
